@@ -2,12 +2,12 @@ name: Auth Service CI/CD Pipeline
 
 on:
   push:
-    branches: [main, master]
+    branches: main
     paths:
       - 'auth/**'
       - '.github/workflows/auth.yml'
   pull_request:
-    branches: [main, master]
+    branches: main
     paths:
       - 'auth/**'
 
@@ -24,6 +24,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+      security-events: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -80,7 +82,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=adajesus_msticket
+            -Dsonar.projectKey=msticket_msticket
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
             -Dsonar.sources=auth/src
             -Dsonar.tests=auth/src
@@ -97,13 +99,14 @@ jobs:
               --file=${{ env.WORKING_DIR }}/package.json
               --project-name=auth-service
               --org=ada-jesus
+              --sarif-file-output=snyk.sarif
         continue-on-error: true
 
       - name: Upload Snyk results
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
-          sarif_file: snyk.sarif
+          sarif_file: auth/snyk.sarif
         continue-on-error: true
 
   security-scan:
