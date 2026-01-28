@@ -208,7 +208,7 @@ jobs:
       - name: Run Trivy SARIF scan - ${{ matrix.severity }}
         uses: aquasecurity/trivy-action@0.16.1
         with:
-          image-ref: ${{ needs.build-container.outputs.image-tag }}
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ needs.build-container.outputs.image-digest }}
           format: 'sarif'
           output: 'trivy-results-${{ matrix.severity }}.sarif'
           severity: '${{ matrix.severity }}'
@@ -219,14 +219,6 @@ jobs:
         with:
           sarif_file: 'trivy-results-${{ matrix.severity }}.sarif'
           category: 'trivy-${{ matrix.severity }}'
-
-      - name: Run Trivy table scan - ${{ matrix.severity }}
-        uses: aquasecurity/trivy-action@0.16.1
-        with:
-          image-ref: ${{ needs.build-container.outputs.image-tag }}
-          format: 'table'
-          output: 'trivy-table-${{ matrix.severity }}.txt'
-          severity: '${{ matrix.severity }}'
 
       - name: Comment PR with Trivy results
         if: github.event_name == 'pull_request'
