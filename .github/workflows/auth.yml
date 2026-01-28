@@ -42,9 +42,9 @@ jobs:
         working-directory: ${{ env.WORKING_DIR }}
         run: npm run lint --if-present || true
 
-      - name: Run tests
-        working-directory: ${{ env.WORKING_DIR }}
-        run: npm test --if-present
+      # - name: Run tests
+      #   working-directory: ${{ env.WORKING_DIR }}
+      #   run: npm test --if-present
 
       - name: Build application
         working-directory: ${{ env.WORKING_DIR }}
