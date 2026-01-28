@@ -3,14 +3,14 @@ name: Auth Service CI/CD Pipeline
 on:
   push:
     branches:
-      - master
+      - main
       - develop
     paths:
       - 'auth/**'
       - '.github/workflows/auth.yml'
   pull_request:
     branches:
-      - master
+      - main
       - develop
     paths:
       - 'auth/**'
