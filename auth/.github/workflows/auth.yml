@@ -4,14 +4,12 @@ on:
   push:
     branches:
       - main
-      - develop
     paths:
       - 'auth/**'
       - '.github/workflows/auth.yml'
   pull_request:
     branches:
       - main
-      - develop
     paths:
       - 'auth/**'
 
