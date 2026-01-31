@@ -1,4 +1,4 @@
-name:  Client Microservice CI
+name: Client Microservice CI
 
 on:
   push:
@@ -11,16 +11,16 @@ on:
     paths:
       - 'client/**'
       - '.github/workflows/client.yml'
+
 permissions:
   contents: read
   pull-requests: write
-
 
 env:
   REGISTRY: docker.io
   IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/client-service
   NODE_VERSION: '20'
-  WORKING_DIR: ./client
+  WORKING_DIR: ./client   # <<< NOTE: We'll use this in working-directory below
 
 jobs:
   ci:
@@ -29,6 +29,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -36,70 +37,63 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
+      # --- INSTALL DEPENDENCIES ---
       - name: Install dependencies
+        working-directory: ${{ env.WORKING_DIR }}   # <<< FIXED
         run: npm ci
 
-      
+      # --- RUN TESTS ---
       - name: Run client tests
-        run: npm run test-client
+        working-directory: ${{ env.WORKING_DIR }}   # <<< FIXED
+        run: npm run test
 
-      - name: Run server tests
-        run: npm run test-server
-
-  
-      # CODE QUALITY (SONARCLOUD)
-     
+      # --- CODE QUALITY (SONARCLOUD) ---
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
+        uses: SonarSource/sonarcloud-github-action@v2.1.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=auth-service
+            -Dsonar.projectKey=client-service
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-            -Dsonar.sources=src
-            -Dsonar.tests=src
-            -Dsonar.test.inclusions=**/*.test.ts,**/*.spec.ts
-            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.sources=./client
+            -Dsonar.tests=./client/__tests__
+            -Dsonar.test.inclusions=**/*.test.js
+            -Dsonar.javascript.lcov.reportPaths=./client/coverage/lcov.info
 
-    
-      # SECURITY SCANS
-    
+      # --- SECURITY SCANS ---
       - name: Snyk Dependency Scan
-        uses: snyk/actions/node@master
+        working-directory: ${{ env.WORKING_DIR }}
+        run: npx snyk test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: test
-
       - name: Snyk Code Scan (SAST)
-        uses: snyk/actions/node@master
+        working-directory: ${{ env.WORKING_DIR }}
+        run: npx snyk code test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: code test
 
       - name: Detect unused dependencies (depcheck)
+        working-directory: ${{ env.WORKING_DIR }}   # <<< FIXED
         run: npx depcheck
 
-     
-      # BUILD ARTIFACT
-
+      # --- BUILD APPLICATION ---
       - name: Build application
-        run: npm run build
+        working-directory: ${{ env.WORKING_DIR }}   # <<< FIXED
+        run: npm run build -- --webpack   # <<< FIXED: added --webpack for Next.js
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: node-app
           path: |
-            dist
-            node_modules
-            package.json
+            client/.next
+            client/node_modules
+            client/package.json
 
   docker:
     name: Build & Push Docker Image
@@ -118,22 +112,21 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Build Docker image
         run: |
-          docker build \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:${{ github.sha }} \
-            .
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/client-service:${{ github.sha }} ./client   # <<< FIXED path to client
 
       - name: Trivy Image Scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:${{ github.sha }}
+          image-ref: ${{ secrets.DOCKER_HUB_USERNAME }}/client-service:${{ github.sha }}
           severity: CRITICAL,HIGH
           exit-code: 1
 
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/auth-service:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/client-service:${{ github.sha }}   # <<< FIXED image name
+
