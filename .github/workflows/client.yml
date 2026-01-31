@@ -42,12 +42,12 @@ jobs:
 
       # --- INSTALL DEPENDENCIES ---
       - name: Install dependencies
-        working-directory: ${{ env.WORKING_DIR }}   # <<< FIXED
+        working-directory: ./client   # <<< FIXED
         run: npm ci
 
       # --- RUN TESTS ---
       - name: Run client tests
-        working-directory: ${{ env.WORKING_DIR }}   # <<< FIXED
+        working-directory: ./client   # <<< FIXED
         run: npm run test
 
       # --- CODE QUALITY (SONARCLOUD) ---
