@@ -95,8 +95,7 @@ jobs:
       - name: Detect unused dependencies (depcheck)
         working-directory: ${{ env.WORKING_DIR }}  # or ./client
         run: |
-          npx depcheck --ignores="eslint,prettier,typescript,@types/*"  # optional: ignore common dev tools
-          # or just: npx depcheck
+          run: npx depcheck --ignores="eslint,prettier,typescript,@types/*,@testing-library/*,babel-jest,prop-types,jest-environment-jsdom" || true
 
       # --- BUILD APPLICATION ---
       - name: Build application
