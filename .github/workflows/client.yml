@@ -19,7 +19,7 @@ permissions:
 env:
   REGISTRY: docker.io
   IMAGE_NAME: ${{ secrets.DOCKER_HUB_USERNAME }}/client-service
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   WORKING_DIR: ./client   # <<< NOTE: We'll use this in working-directory below
 
 jobs:
@@ -48,12 +48,12 @@ jobs:
 
       # --- RUN TESTS ---
       - name: Run client tests
-        working-directory: ./client   # <<< FIXED
-        run: npm run test
+        working-directory: ${{ env.WORKING_DIR }}
+        run: npm test -- --coverage --passWithNoTests
 
-     
+     # -- CODE QUALITY ANALYSIS ---
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2.1.1
+        uses: SonarSource/sonarqube-scan-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -64,6 +64,7 @@ jobs:
             -Dsonar.sources=client
             -Dsonar.test.inclusions=**/*.test.js,**/*.spec.js,**/__tests__/**
             -Dsonar.javascript.lcov.reportPaths=client/coverage/lcov.info
+            -Dsonar.verbose=true
 
       # --- SECURITY SCANS ---
       - name: Snyk Dependency Scan
