@@ -61,10 +61,10 @@ jobs:
           args: >
             -Dsonar.projectKey=client-service
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-            -Dsonar.sources=./client
-            -Dsonar.tests=./client/__tests__
-            -Dsonar.test.inclusions=**/*.test.js
-            -Dsonar.javascript.lcov.reportPaths=./client/coverage/lcov.info
+            -Dsonar.sources=client
+            -Dsonar.tests=client/__tests__
+            -Dsonar.test.inclusions=**/*.test.js,**/*.spec.js,**/__tests__/**
+            -Dsonar.javascript.lcov.reportPaths=client/coverage/lcov.info
 
       # --- SECURITY SCANS ---
       - name: Snyk Dependency Scan
