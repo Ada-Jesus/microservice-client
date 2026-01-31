@@ -59,7 +59,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=Ada-Jesus
+            -Dsonar.projectKey=ada-jesus_client-service
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
             -Dsonar.sources=client
             -Dsonar.test.inclusions=**/*.test.js,**/*.spec.js,**/__tests__/**
