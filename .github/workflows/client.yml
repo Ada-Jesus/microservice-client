@@ -59,10 +59,9 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=client-service
+            -Dsonar.projectKey=Ada-Jesus
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
             -Dsonar.sources=client
-            -Dsonar.tests=client/__tests__
             -Dsonar.test.inclusions=**/*.test.js,**/*.spec.js,**/__tests__/**
             -Dsonar.javascript.lcov.reportPaths=client/coverage/lcov.info
 
