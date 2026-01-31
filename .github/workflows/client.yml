@@ -77,7 +77,6 @@ jobs:
 
 # snyk code scan
       - name: Snyk Code Scan (SAST)
-        working-directory: ${{ env.WORKING_DIR }}
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
