@@ -67,23 +67,23 @@ jobs:
 
       # --- SECURITY SCANS ---
       - name: Snyk Dependency Scan
-        working-directory: ${{ env.WORKING_DIR }}
+        working-directory: ./client   # <<< FIXED
         run: npx snyk test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       - name: Snyk Code Scan (SAST)
-        working-directory: ${{ env.WORKING_DIR }}
+        working-directory: ./client
         run: npx snyk code test
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Detect unused dependencies (depcheck)
-        working-directory: ${{ env.WORKING_DIR }}   # <<< FIXED
+        working-directory: ./client   # <<< FIXED
         run: npx depcheck
 
       # --- BUILD APPLICATION ---
       - name: Build application
-        working-directory: ${{ env.WORKING_DIR }}   # <<< FIXED
+        working-directory: ./client   # <<< FIXED
         run: npm run build -- --webpack   # <<< FIXED: added --webpack for Next.js
 
       - name: Upload build artifact
