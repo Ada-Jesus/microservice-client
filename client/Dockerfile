@@ -1,5 +1,5 @@
 FROM node:20-alpine AS builder
-
+RUN apk update && apk upgrade --available
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
