@@ -51,7 +51,7 @@ jobs:
         working-directory: ./client   # <<< FIXED
         run: npm run test
 
-      # --- CODE QUALITY (SONARCLOUD) ---
+     
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2.1.1
         env:
