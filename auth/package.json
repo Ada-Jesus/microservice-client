@@ -6,7 +6,9 @@
   "scripts": {
     "start": "ts-node-dev --poll src/index.ts",
     "test": "jest --watchAll --no-cache",
-    "test:ci": "jest"
+    "test:ci": "jest",
+    "build": "tsc -p tsconfig.json"    
+
   },
   "jest": {
     "preset": "ts-jest",

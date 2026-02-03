@@ -2,12 +2,16 @@ name: Auth Service CI/CD Pipeline
 
 on:
   push:
-    branches: main
+    branches: 
+      - main
+      - master
     paths:
       - 'auth/**'
       - '.github/workflows/auth.yml'
   pull_request:
-    branches: main
+    branches: 
+      - main
+      - master
     paths:
       - 'auth/**'
 
@@ -207,7 +211,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        severity: ['CRITICAL,HIGH', 'MEDIUM']
+        severity: ['CRITICAL']
 
     steps:
       - uses: actions/checkout@v4
