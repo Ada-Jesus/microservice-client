@@ -82,11 +82,11 @@ jobs:
       - name: SonarQube Scan
         uses: SonarSource/sonarcloud-github-action@v3
         env:
-          GITHUB_TOKEN: ${{ secrets._GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=msticket_msticket
+            -Dsonar.projectKey=auth-service1
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
             -Dsonar.sources=auth/src
             -Dsonar.tests=auth/src
@@ -105,7 +105,7 @@ jobs:
               --org=ada-jesus
               --sarif-file-output=snyk.sarif
         continue-on-error: true
-
+# snyk code scan
       - name: Upload Snyk results
         uses: github/codeql-action/upload-sarif@v4
         if: always()
