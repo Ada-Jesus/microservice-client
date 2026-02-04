@@ -92,7 +92,7 @@ jobs:
             -Dsonar.tests=auth/src
             -Dsonar.test.inclusions=**/*.test.ts,**/*.spec.ts
             -Dsonar.typescript.lcov.reportPaths=auth/coverage/lcov.info
-
+# snyk code scan
       - name: Snyk Security Scan
         uses: snyk/actions/node@0.4.0
         env:
@@ -105,7 +105,7 @@ jobs:
               --org=ada-jesus
               --sarif-file-output=snyk.sarif
         continue-on-error: true
-# snyk code scan
+
       - name: Upload Snyk results
         uses: github/codeql-action/upload-sarif@v4
         if: always()
